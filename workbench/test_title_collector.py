@@ -19,17 +19,25 @@ if __name__ == "__main__":
             url = "http://export.arxiv.org/api/query?search_query={0}&start={1}&max_results={2}".format(
                 search_query,
                 BATCH_SIZE * batch_num,
-                BATCH_SIZE)
+                BATCH_SIZE).replace(" ", "+")
 
             print(url)
-            data = urllib.request.urlopen(url).read()
-            parsed = feedparser.parse(data)
-
-            if not parsed["entries"]:
+            try:
+                data = urllib.request.urlopen(url).read()
+            except urllib.error.URLERROR as e:
+                print("Sorry, something is wrong with the url ", url)
+                print("The following error occurred:")
+                print(e.reason)
+                titles = []
                 break
             
-            for entry in parsed["entries"]:
-                titles.append(entry["title"])
+            parsed = feedparser.parse(data)
+
+            if not parsed.entries:
+                break
+            
+            for entry in parsed.entries:
+                titles.append(entry.title)
         
 
         if titles:
