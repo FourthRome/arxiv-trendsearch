@@ -48,13 +48,15 @@ def load_batch(search_query, batch_number):
         print(url)
 
     try:
-        xml_feed = urllib.request.urlopen(url).read()
-    except (urllib.error.URLERROR, http.client.HTTPException) as e:
+        with urllib.request.urlopen(url) as request: 
+            # DEBUG
+            # print("Request code: {0}".format(request.msg))
+            # print(request.read().decode("utf-8"))
+            return request.read().decode("utf-8")
+    except urllib.error.URLERROR as e:
         print("Sorry, something is wrong with the url {0}".format(url))
         print("The following error occurred: {0}".format(e.reason))
         exit(1)
-    
-    return xml_feed
 
 
 def update_word_amounts(word_amounts, parsed_batch, tokenizer=RegexpTokenizer(SPLIT_REGEXP, gaps=True)):
@@ -109,6 +111,8 @@ if __name__ == "__main__":
         # each decade.
         parsed_batch = feedparser.parse(load_batch(search_query, batch_number)) 
         if not parsed_batch.entries:
+            # DEBUG
+            # print(parsed_batch)
             break
         update_word_amounts(word_amounts, parsed_batch)
     
@@ -127,4 +131,5 @@ if __name__ == "__main__":
         for number, word in enumerate(sorted(word_amounts[decade], key=word_amounts[decade].get, reverse=True)[:10]):
             print("{0:<2} - {1:<30} - occurred {2} times".format(number + 1, word, word_amounts[decade][word]))
         
+        # Making output prettier, and code uglier.
         print("")
