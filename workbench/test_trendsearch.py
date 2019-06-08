@@ -31,7 +31,7 @@ if __name__ == "__main__":
                 print("Sorry, something is wrong with the url ", url)
                 print("The following error occurred:")
                 print(e.reason)
-                words = []
+                words = {}
                 break
             
             parsed = feedparser.parse(data)
