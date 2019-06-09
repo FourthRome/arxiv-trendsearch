@@ -14,10 +14,12 @@ https://github.com/FourthRome
 
 from sys import exit
 import urllib
+from time import sleep
 import http.client
 import feedparser
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
+
 
 # MAX_RESULTS defines amount of search results taken into account.
 MAX_RESULTS = 10000
@@ -32,6 +34,7 @@ SPLIT_REGEXP = r"(?:-{2,}|[^a-zA-Z\-])+"
 # ideas on this.
 STOPWORDS = set(stopwords.words("english"))
 INTERACTIVE_OUTPUT = True
+SECONDS_BETWEEN_QUERIES = 3
 
 
 def load_batch(search_query, batch_number):
@@ -50,7 +53,8 @@ def load_batch(search_query, batch_number):
     try:
         with urllib.request.urlopen(url) as request: 
             # DEBUG
-            # print("Request code: {0}".format(request.msg))
+            print("Request info: {0}".format(request.info))
+            sleep(SECONDS_BETWEEN_QUERIES)
             # print(request.read().decode("utf-8"))
             return request.read().decode("utf-8")
     except urllib.error.URLERROR as e:
@@ -109,10 +113,11 @@ if __name__ == "__main__":
         # Load next batch of Atom feed and parse it.  Check if there are
         # any search results in it.  Recalculate amounts of words for
         # each decade.
-        parsed_batch = feedparser.parse(load_batch(search_query, batch_number)) 
+        raw_string = load_batch(search_query, batch_number)
+        parsed_batch = feedparser.parse(raw_string) 
         if not parsed_batch.entries:
             # DEBUG
-            # print(parsed_batch)
+            print(raw_string)
             break
         update_word_amounts(word_amounts, parsed_batch)
     
