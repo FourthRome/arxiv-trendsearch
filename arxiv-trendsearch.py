@@ -113,6 +113,7 @@ if __name__ == "__main__":
         # Load next batch of Atom feed and parse it.  Check if there are
         # any search results in it.  Recalculate amounts of words for
         # each decade.
+        # DEBUG; refactor raw_string later
         raw_string = load_batch(search_query, batch_number)
         parsed_batch = feedparser.parse(raw_string) 
         if not parsed_batch.entries:
