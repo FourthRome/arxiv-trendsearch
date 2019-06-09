@@ -53,7 +53,7 @@ def load_batch(search_query, batch_number):
     try:
         with urllib.request.urlopen(url) as request: 
             # DEBUG
-            print("Request info: {0}".format(request.info))
+            print("Request info: {0} {1}".format(request.getcode(), request.msg))
             sleep(SECONDS_BETWEEN_QUERIES)
             # print(request.read().decode("utf-8"))
             return request.read().decode("utf-8")
